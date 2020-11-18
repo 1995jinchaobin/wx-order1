@@ -128,6 +128,20 @@
 					"id": -1,
 					"name": "pages/orderPart/orderList/orderList",
 					"pathName": "pages/orderPart/orderList/orderList",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/orderPart/orderMsg/index",
+					"pathName": "pages/orderPart/orderMsg/index",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/orderPart/orderList/orderList",
+					"pathName": "pages/orderPart/orderList/orderList",
 					"scene": null
 				}
 			]

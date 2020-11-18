@@ -19,7 +19,7 @@ Page({
       //员工
       user:'/user',
       // 面料,
-      fabricAll: '/fabric',
+      // fabricAll: '/fabric',
       //浆料配方
       sizing: '/sizing/sizing'
     },
@@ -67,7 +67,7 @@ Page({
     note:'',
     filePath:'',
     // 再次下单时判断面料
-    againIndex:'',
+    againFabricName:'',
     // 再次下单时判断配置方案
     againConfig:'',
     // 再次下单时判断调色员
@@ -83,10 +83,12 @@ Page({
     ],
     //经销面料列表
     jingxiaoList: [],
+    jiagongList: [],
     //浆料配方列表
     sizingList: [],
     //浆料配方选择的索引
-    sizingIndex: 0
+    sizingIndex: 0,
+    mianliaoIndex: true
   },
   //修改是否加急状态
   changeExpedite(e){
@@ -115,7 +117,6 @@ Page({
         if (index===-1){
           index = 0
         }
-        console.log(index)
         this.setData({
           sizingIndex: index
         })
@@ -145,7 +146,7 @@ Page({
             _this.setData({
               colorBoyIndex:0
             })
-            if (_this.data.fabricTypeIndex == 1) {
+            if (_this.data.fabricTypeIndex == 0) {
               _this.setData({
                 fabricTypeIndex: 0,
                 fabricIndex: 0
@@ -158,9 +159,9 @@ Page({
         }
       })
     }
-    this.setData({
-      fabricIndex: 0
-    })
+    // this.setData({
+    //   fabricIndex: 0
+    // })
   },
   // 选择面料
   bindPickerChange(e){
@@ -176,54 +177,79 @@ Page({
     if (this.data.fabricTypeIndex==1){
       // this.getFabricListAll()
       const arr = this.data.jingxiaoList
+      console.log('切换到经销'+arr)
       this.setData({
         fabricList: arr
       })
     } else{
-      this.getFabricList(this.data.userInfo)
+      // this.getFabricList(this.data.userInfo)
+      this.setData({
+        fabricList: this.data.jiagongList
+      })
     }
     this.setData({
       fabricIndex: 0
     })
   },
-  // 获取所有面料列表
+  // 获取加工面料列表
   getFabricListAll () {
     let _this = this;
     let data = {
       page: 1,
       rows: 999,
+      fkCustomerId: this.data.userInfo.id == null ? 0 : this.dat.userInfo.id
     }
-    request.request(this.data.requestUrl.fabricAll, data, 'get', '', (res) => {
-      const resLength = res.data.data.list.length
+    request.request(this.data.requestUrl.fabric, data, 'get', '', (res) => {
+      const resLength = res.data.data.length
       let list = [
         {
           id: 0,
           name: '选择面料'
         }
       ]
-      let arr = [
+      console.log(res)
+      for (let i = 0; i < resLength; i++) {
+        if (res.data.data[i].fkCustomerId !== -10) {
+          list.push(res.data.data[i])
+        }
+      }
+      _this.setData({
+        fabricList: list,
+        jiagongList: list,
+        wwwFileBaseUrl: res.data.wwwFileBaseUrl
+      })
+      // if (this.data.fabricTypeIndex === 1) {
+      //   const jingxiaoParams = {
+      //     page: 1,
+      //     rows: 999,
+      //     fkCustomerId:-10
+      //   }
+      //   request.request(this.data.requestUrl.fabric, jingxiaoParams, 'get', '', (res) =>{
+      //     _this.setData({
+      //       fabricList: res.data.data,
+      //       jingxiaoList: res.data.data
+      //     })
+      //   })
+      // }
+    })
+  },
+  //获取经销面料列表
+  getJingxiaoList () {
+    const jingxiaoParams = {
+      page: 1,
+      rows: 999,
+      fkCustomerId:-10
+    }
+    request.request(this.data.requestUrl.fabric, jingxiaoParams, 'get', '', (res) => {
+      const arr = [
         {
           id: 0,
           name: '选择面料'
         }
       ]
-      for (let i = 0; i < resLength; i++) {
-        if (res.data.data.list[i].fkCustomerId === -10) {
-          arr.push(res.data.data.list[i])
-        } else {
-          list.push(res.data.data.list[i])
-        }
-      }
-      _this.setData({
-        fabricList: list,
-        jingxiaoList: arr,
-        wwwFileBaseUrl: res.data.wwwFileBaseUrl
+      this.setData({
+        jingxiaoList: arr.concat(res.data.data)
       })
-      if (this.data.fabricTypeIndex === 1) {
-        _this.setData({
-          fabricList: arr
-        })
-      }
     })
   },
   // 选择快递方式
@@ -258,15 +284,41 @@ Page({
       rows: 999,
       fkCustomerId: userInfo.id == null ? 0 : userInfo.id
     }
+    console.log(286)
     request.request(this.data.requestUrl.fabric,data,'get','',(res)=>{
+      console.log(res)
       const resLength = res.data.data.length
-      if (resLength===0) {
+      if (resLength === 0 && this.data.fabricTypeIndex == 0) {
         _this.setData({
-          fabricList: [
+          jiagongList: [
             {id:0,
             name:'该客户无面料，请联系管理员添加'}
           ]
         })
+        // if(this.data.fabricTypeIndex==0){
+        //   _this.setData({
+        //     fabricList:this.data.jiagongList
+        //   })
+        // }else {
+        //   data.fkCustomerId = -10
+        //   request.request(this.data.requestUrl.fabric, data, 'get', '', (res) => {
+        //     console.log(res)
+        //     const arrJ = [
+        //       {
+        //         id: 0,
+        //         name: '选择面料'
+        //       }
+        //     ]
+        //     _this.setData({
+        //       fabricList: arrJ.concat(res.data.data),
+        //       jingxiaoList: arrJ.concat(res.data.data)
+        //     })
+        //     console.log(this.data)
+        //     if (this.data.againFabricName){
+
+        //     }
+        //   })
+        // }
         return
       }
       let list = [
@@ -276,10 +328,21 @@ Page({
       for(let i = 0;i < res.data.data.length;i++){
         list.push(res.data.data[i])
       }
-      _this.setData({
-        fabricList: list,
-        wwwFileBaseUrl: res.data.wwwFileBaseUrl
-      })
+      console.log(_this.data.fabricTypeIndex)
+      console.log(this.data.fabricTypeIndex)
+      if (_this.data.fabricTypeIndex==1){
+        console.log(306)
+        _this.setData({
+          fabricList: _this.data.jingxiaoList,
+          wwwFileBaseUrl: res.data.wwwFileBaseUrl
+        })
+      } else{
+        console.log(313)
+        _this.setData({
+          fabricList: list,
+          wwwFileBaseUrl: res.data.wwwFileBaseUrl
+        })
+      }
       if(wx.getStorageSync("orderInfo")){
         let orderInfo = wx.getStorageSync("orderInfo");
         let fabricIndex;
@@ -294,31 +357,67 @@ Page({
           fabricIndex: fabricIndex
         })
       }
-      if(this.data.againIndex){
-        let fabricIndex;
-        let index = 0;
-        list.forEach(item => {
-          if (item.name == this.data.againIndex) {
-            fabricIndex = index
+      if (this.data.againFabricName){
+        // const jingxiaoParams = {
+        //   page: 1,
+        //   rows: 999,
+        //   fkCustomerId: -10
+        // }
+        // request.request(this.data.requestUrl.fabric, jingxiaoParams, 'get', '', (res) => {
+        //   this.setData({
+        //     fabricList: res.data.data,
+        //     jingxiaoList: res.data.data
+        //   })
+        // })
+        let arrList = [
+          {
+            id: 0,
+            name: '选择面料'
           }
-          index++;
-        })
-        _this.setData({
-          fabricIndex: fabricIndex
-        })
-      }
-      if (this.data.fabricTypeIndex === 1) {
-        const arr = _this.data.jingxiaoList
-        let indexJinxgiao = arr.findIndex(item => {
-          return item.name === _this.data.againIndex
-        })
-        if (indexJinxgiao===-1) {
-          indexJinxgiao = 0
+        ]
+        if (this.data.fabricTypeIndex===1) {
+          const jingxiaoParams = {
+            page: 1,
+            rows: 999,
+            fkCustomerId: -10
+          }
+          request.request(this.data.requestUrl.fabric, jingxiaoParams, 'get', '', (res) => {
+            this.setData({
+              fabricList: arrList.concat(res.data.data),
+              jingxiaoList: arrList.concat(res.data.data)
+            })
+            let index = this.data.jingxiaoList.findIndex(item => {
+              return item.name === this.data.againFabricName
+            })
+            if (index===-1){
+              index=0
+            }
+            this.setData({
+              fabricIndex: index
+            })
+          })
+        } else{
+          const jingxiaoParams = {
+            page: 1,
+            rows: 999,
+            fkCustomerId: this.data.userInfo.id
+          }
+          request.request(this.data.requestUrl.fabric, jingxiaoParams, 'get', '', (res) => {
+            this.setData({
+              jiagongList: arrList.concat(res.data.data),
+              fabricList: arrList.concat(res.data.data)
+            })
+            let index = this.data.jiagongList.findIndex(item => {
+              return item.name === this.data.againFabricName
+            })
+            if (index === -1) {
+              index = 0
+            }
+            this.setData({
+              fabricIndex: index
+            })
+          })
         }
-        _this.setData({
-          fabricList: arr,
-          fabricIndex: indexJinxgiao
-        })
       }
     })
   },
@@ -430,7 +529,6 @@ Page({
         _this.setData({
           colorBoyIndex: colorIndex
         })
-        console.log('调色员索引'+this.data.colorBoyIndex)
       }
     })
   },
@@ -796,10 +894,12 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    this.getSizingList()
+    console.log(options)
     this.getFabricListAll()
+    this.getSizingList()
     this.getColorBoyList(); 
     this.getConfigList();
+    this.getJingxiaoList()
     let date = util.formaData();
     let newList = [];
     this.setData({
@@ -822,8 +922,9 @@ Page({
     }
     if(options.again){
       let orderInfo = JSON.parse(options.again);
+      console.log(orderInfo)
       this.setData({
-        againIndex: orderInfo.fabricName,
+        againFabricName: orderInfo.fabricName,
         againConfig: orderInfo.configName,
         againColorBoy: orderInfo.colorName,
         againSizing: orderInfo.sizingName
@@ -858,6 +959,7 @@ Page({
       })
       let time = util.formaData();
       this.getFabricList(userInfo);
+      console.log(940)
       this.setData({
         userInfo: userInfo,
         flowerList: newList,
@@ -930,7 +1032,7 @@ Page({
         note2: orderInfo.note2,
         filePath:orderInfo.filePath,
         expedite: orderInfo.expedite,
-        againIndex: orderInfo.fabricName,
+        againFabricName: orderInfo.fabricName,
         againSizing: orderInfo.sizingName,
         againColorBoy: orderInfo.colorName
       })

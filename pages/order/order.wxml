@@ -38,7 +38,7 @@
       </picker>
       <image src="../images/order/Chevron.png"></image>
     </view>
-    <view class="fabric" bindtap="mianLiaoClick">
+    <view class="fabric">
       <text>面料</text>
       <picker bindchange="bindPickerChange" value="{{fabricIndex}}" disabled="{{!isType}}" range="{{fabricList}}" range-key="name">
         <view class="picker">
