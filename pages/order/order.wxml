@@ -31,7 +31,7 @@
     </view>
     <view class="fabric">
       <text>面料来源</text>
-      <picker bindchange="bindfabricTypeChange" value="{{fabricTypeIndex}}" disabled="{{!isType}}" range="{{fabricType}}" range-key="name">
+      <picker bindchange="bindfabricTypeChange" value="{{fabricTypeIndex}}" range="{{fabricType}}" range-key="name" disabled="{{!isType&&checkTime}}">
         <view>
           {{fabricType[fabricTypeIndex].name}}
         </view>
@@ -70,15 +70,15 @@
     </view>
     <view class="fabric">
       <text>单价</text>
-      <input type="digit" disabled="{{!isType}}" bindblur="setPrice" placeholder="元" value="{{price}}"></input>
+      <input type="digit" bindblur="setPrice" placeholder="元" value="{{price}}" disabled="{{!isType}}"></input>
     </view>
     <view class="fabric">
       <text>打印数量</text>
-      <input type="digit" disabled="{{!isType}}" bindblur="setSize" placeholder="米" value="{{size}}"></input>
+      <input type="digit" bindblur="setSize" placeholder="米" value="{{size}}" disabled="{{!isType&&checkTime}}"></input>
     </view>
     <view class="fabric">
       <text>是否加急</text>
-      <switch checked="{{expedite}}" bindchange="changeExpedite"/>
+      <switch checked="{{expedite}}" bindchange="changeExpedite" disabled="{{!isType}}"/>
     </view>
     <view class="fabric">
       <text>快递方式</text>
@@ -92,7 +92,7 @@
 
     <view class="fabric">
       <text>收货时间</text>
-      <picker mode="date" value="{{date}}"  start="2015-09-01" end="2100-09-01" bindchange="bindDateChange">
+      <picker mode="date" value="{{date}}" disabled="{{!isType}}" start="2015-09-01" end="2100-09-01" bindchange="bindDateChange">
         <view class="picker">
           {{date}}
         </view>
@@ -105,7 +105,7 @@
     </view>
     <view class="fabric textBox" wx:if="{{!isType}}">
       <text>备注</text>
-      <textarea bindblur="note2Change" value="{{note2}}"></textarea>
+      <textarea bindinput="note2Change" value="{{note2}}"></textarea>
     </view>
   </view>
   <view class="footBox">

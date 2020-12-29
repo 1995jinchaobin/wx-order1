@@ -16,8 +16,10 @@ Page({
     concat:'',
     fabricIndex: 0,
     date: '2016-09-01',
+    dateEnd:'',
     orderStatus:'',
-    flowerNum:''
+    flowerNum:'',
+    role: null
   },
 
   // 公司名
@@ -47,6 +49,11 @@ Page({
   bindDateChange(e) {
     this.setData({
       date: e.detail.value
+    })
+  },
+  bindDateChangeEnd(e) {
+    this.setData({
+      dateEnd: e.detail.value
     })
   },
   // 获取面料规格
@@ -154,9 +161,9 @@ Page({
   },
   //搜索
   searchOrder(){
-    console.log(this.data.orderStatus)
+    // console.log(this.data.orderStatus)
     wx.navigateTo({
-      url: '/pages/orderPart/orderList/orderList?&startTime=' + this.data.date + ' 00:00:00' + ' &endTime=' + this.data.date + '&orderStatus=' + this.data.orderStatus + '&fkFabricId=' + this.data.fabricList[this.data.fabricIndex].id + '&companyName=' + this.data.companyName + '&concat=' + this.data.concat + '&flowerNum=' + this.data.flowerNum
+      url: '/pages/orderPart/orderList/orderList?&startTime=' + this.data.date + ' 00:00:00' + ' &endTime=' + this.data.dateEnd + '&orderStatus=' + this.data.orderStatus + '&fkFabricId=' + this.data.fabricList[this.data.fabricIndex].id + '&companyName=' + this.data.companyName + '&concat=' + this.data.concat + '&flowerNum=' + this.data.flowerNum
     })
   },
 
@@ -164,10 +171,12 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    let date = util.formaData();
+    let date = util.formaData()
     this.setData({
-      date: date
+      date: date,
+      dateEnd:date
     })
+    // let role = wx.getStorageSync("userInfo").role
     this.setOrderStatus();
     this.getFabricList();
   },

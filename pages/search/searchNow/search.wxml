@@ -1,42 +1,43 @@
-<!--pages/search/searchNow/search.wxml-->
+<!-- pages/search/searchNow/search.wxml -->
 <view>
   <view class="formBox">
     <view class="fabric">
-        <text>公司名</text>
-        <input placeholder-class="input-placeholder" type="text"  bindblur="companyNameChange" placeholder="请输入公司名" value="{{companyName}}"></input>
+      <text>公司名</text>
+      <input placeholder-class="input-placeholder" type="text" bindblur="companyNameChange" placeholder="请输入公司名" value="{{companyName}}"></input>
     </view>
     <view class="fabric">
-        <text>联系人</text>
-        <input placeholder-class="input-placeholder" type="text" bindblur="concatChange" placeholder="请输入公司联系人" value="{{concat}}"></input>
+      <text>联系人</text>
+      <input placeholder-class="input-placeholder" type="text" bindblur="concatChange" placeholder="请输入公司联系人" value="{{concat}}"></input>
     </view>
     <view class="fabric">
       <text>面料规格</text>
       <picker bindchange="bindPickerChange" value="{{fabricIndex}}" range="{{fabricList}}" range-key="name">
-        <view class="picker">
-          {{fabricList[fabricIndex].name}}
-        </view>
+        <view class="picker">{{fabricList[fabricIndex].name}}</view>
       </picker>
       <image src="../../images/order/Chevron.png"></image>
     </view>
     <view class="fabric">
-        <text>花号</text>
-        <input placeholder-class="input-placeholder" type="text" bindblur="flowerNumChange" placeholder="请输入花型编号" value="{{flowerNum}}"></input>
+      <text>花号</text>
+      <input placeholder-class="input-placeholder" type="text" bindblur="flowerNumChange" placeholder="请输入花型编号" value="{{flowerNum}}"></input>
     </view>
     <view class="fabric">
       <text>订单状态</text>
-      <picker bindchange="bindOrderStateChange" value="{{statusIndex}}" range="{{statusList}}" >
-        <view class="picker">
-          {{statusList[statusIndex]}}
-        </view>
+      <picker bindchange="bindOrderStateChange" value="{{statusIndex}}" range="{{statusList}}">
+        <view class="picker">{{statusList[statusIndex]}}</view>
       </picker>
       <image src="../../images/order/Chevron.png"></image>
     </view>
     <view class="fabric">
-      <text>日期</text>
-      <picker mode="date" value="{{date}}"  start="2015-09-01" end="2100-09-01" bindchange="bindDateChange">
-        <view class="picker">
-          {{date}}
-        </view>
+      <text>开始日期</text>
+      <picker mode="date" value="{{date}}" start="2015-09-01" end="2100-09-01" bindchange="bindDateChange">
+        <view class="picker">{{date}}</view>
+      </picker>
+      <image src="../../images/order/Chevron.png"></image>
+    </view>
+    <view class="fabric">
+      <text>结束日期</text>
+      <picker mode="date" value="{{dateEnd}}" start="2015-09-01" end="2100-09-01" bindchange="bindDateChangeEnd">
+        <view class="picker">{{dateEnd}}</view>
       </picker>
       <image src="../../images/order/Chevron.png"></image>
     </view>

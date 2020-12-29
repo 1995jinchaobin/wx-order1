@@ -19,7 +19,7 @@ Page({
     },
     resultImgUrl:'',
     imgList:[],
-    page:1,
+    page:0,
     maxImgUrl:'',
     maxImgShow: false,
     path:'knowledge',
@@ -31,7 +31,7 @@ Page({
     let _this = this;
     let obj = {
       token: wx.getStorageSync('token'),
-      page:1,
+      page:0,
       rows: 50
     }
     wx.chooseImage({
@@ -66,20 +66,21 @@ Page({
       success(res){
         let result = JSON.parse(res.data);
         if(result.code == 0){
+          console.log(result)
         let newImgList = [];
-          if (result.data.searchResult.auctions.length >= 1){
+          if (result.data.result.length >= 1){
           if (_this.data.imgList.length > 0){
             for(let i = 0;i < _this.data.imgList.length;i++){
               newImgList.push(_this.data.imgList[i]);
             }
           }
-          for (let i = 0; i < result.data.searchResult.auctions.length;i++){
-            let str = result.data.searchResult.auctions[i].picName;
+            for (let i = 0; i < result.data.result.length;i++){
+            let str = result.data.result[i].name;
             let text = str.substr(str.lastIndexOf('.'));
-            result.data.searchResult.auctions[i].picName = str.replace(text, '');
-            newImgList.push(result.data.searchResult.auctions[i])
+            result.data.result[i].name = str.replace(text, '');
+            newImgList.push(result.data.result[i])
           }
-            if (result.data.searchResult.auctions.length < 1){
+            if (result.data.result.length < 1){
             wx.showToast({
               title: '没有更多相似图片了',
               icon: 'none'
@@ -132,13 +133,13 @@ Page({
       success: function(res) {
         baseImgUrl = res.data;
         _this.setData({
-          maxImgUrl: baseImgUrl + item.customContent,
+          maxImgUrl: baseImgUrl + item.url,
           maxImgShow: true
         })
         let obj = {
           searchImgUrl: _this.data.searchImgUrl,
-          resultImgUrl: item.customContent,
-          productId: item.productId
+          resultImgUrl: item.url,
+          productId: item.score
         }
         request.request(_this.data.actions.picClick, obj, 'post', 'knowLedgeCount', (res) => { })
       }
@@ -155,6 +156,7 @@ Page({
   actFlower(e){
     let info = e.target.dataset.info;
     let list = this.data.actFlowerList;
+    console.log(e)
     list.push(info);
     this.setData({
       actFlowerList: list

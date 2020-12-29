@@ -208,7 +208,7 @@ Page({
       data.key = key
     }
     request.request(this.data.requestUrl.customer,data,'get','',(res)=>{
-      console.log(res)
+      // console.log(res)
 
       _this.setData({
         customerList: res.data.data.list

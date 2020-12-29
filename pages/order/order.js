@@ -19,7 +19,7 @@ Page({
       //员工
       user:'/user',
       // 面料,
-      // fabricAll: '/fabric',
+      fabricAll: '/fabric',
       //浆料配方
       sizing: '/sizing/sizing'
     },
@@ -88,7 +88,8 @@ Page({
     sizingList: [],
     //浆料配方选择的索引
     sizingIndex: 0,
-    mianliaoIndex: true
+    mianliaoIndex: true,
+    checkTime:true
   },
   //修改是否加急状态
   changeExpedite(e){
@@ -146,12 +147,12 @@ Page({
             _this.setData({
               colorBoyIndex:0
             })
-            if (_this.data.fabricTypeIndex == 0) {
+            // if (_this.data.fabricTypeIndex == 0) {
               _this.setData({
                 fabricTypeIndex: 0,
                 fabricIndex: 0
               })
-            }
+            // }
           },
         },
         success: function (res) {
@@ -165,6 +166,12 @@ Page({
   },
   // 选择面料
   bindPickerChange(e){
+    if (!this.data.userInfo.id) {
+      wx.showToast({
+        title: '请先选择联系人',
+      })
+      return
+    }
     this.setData({
       fabricIndex: e.detail.value
     })
@@ -175,14 +182,11 @@ Page({
       fabricTypeIndex: e.detail.value
     })
     if (this.data.fabricTypeIndex==1){
-      // this.getFabricListAll()
       const arr = this.data.jingxiaoList
-      console.log('切换到经销'+arr)
       this.setData({
         fabricList: arr
       })
     } else{
-      // this.getFabricList(this.data.userInfo)
       this.setData({
         fabricList: this.data.jiagongList
       })
@@ -207,7 +211,6 @@ Page({
           name: '选择面料'
         }
       ]
-      console.log(res)
       for (let i = 0; i < resLength; i++) {
         if (res.data.data[i].fkCustomerId !== -10) {
           list.push(res.data.data[i])
@@ -216,21 +219,22 @@ Page({
       _this.setData({
         fabricList: list,
         jiagongList: list,
+        jingxiaoList:list,
         wwwFileBaseUrl: res.data.wwwFileBaseUrl
       })
-      // if (this.data.fabricTypeIndex === 1) {
-      //   const jingxiaoParams = {
-      //     page: 1,
-      //     rows: 999,
-      //     fkCustomerId:-10
-      //   }
-      //   request.request(this.data.requestUrl.fabric, jingxiaoParams, 'get', '', (res) =>{
-      //     _this.setData({
-      //       fabricList: res.data.data,
-      //       jingxiaoList: res.data.data
-      //     })
-      //   })
-      // }
+      if (this.data.fabricTypeIndex === 1) {
+        const jingxiaoParams = {
+          page: 1,
+          rows: 999,
+          fkCustomerId:-10
+        }
+        request.request(this.data.requestUrl.fabric, jingxiaoParams, 'get', '', (res) =>{
+          _this.setData({
+            fabricList: res.data.data,
+            jingxiaoList: res.data.data
+          })
+        })
+      }
     })
   },
   //获取经销面料列表
@@ -284,41 +288,41 @@ Page({
       rows: 999,
       fkCustomerId: userInfo.id == null ? 0 : userInfo.id
     }
-    console.log(286)
     request.request(this.data.requestUrl.fabric,data,'get','',(res)=>{
-      console.log(res)
       const resLength = res.data.data.length
       if (resLength === 0 && this.data.fabricTypeIndex == 0) {
         _this.setData({
           jiagongList: [
             {id:0,
             name:'该客户无面料，请联系管理员添加'}
-          ]
+          ],
+          fabricList: [{
+            id: 0,
+            name: '该客户无面料，请联系管理员添加'
+          }]
         })
-        // if(this.data.fabricTypeIndex==0){
-        //   _this.setData({
-        //     fabricList:this.data.jiagongList
-        //   })
-        // }else {
-        //   data.fkCustomerId = -10
-        //   request.request(this.data.requestUrl.fabric, data, 'get', '', (res) => {
-        //     console.log(res)
-        //     const arrJ = [
-        //       {
-        //         id: 0,
-        //         name: '选择面料'
-        //       }
-        //     ]
-        //     _this.setData({
-        //       fabricList: arrJ.concat(res.data.data),
-        //       jingxiaoList: arrJ.concat(res.data.data)
-        //     })
-        //     console.log(this.data)
-        //     if (this.data.againFabricName){
+        if(this.data.fabricTypeIndex==0){
+          _this.setData({
+            fabricList:this.data.jiagongList
+          })
+        }else {
+          data.fkCustomerId = -10
+          request.request(this.data.requestUrl.fabric, data, 'get', '', (res) => {
+            const arrJ = [
+              {
+                id: 0,
+                name: '选择面料'
+              }
+            ]
+            _this.setData({
+              fabricList: arrJ.concat(res.data.data),
+              jingxiaoList: arrJ.concat(res.data.data)
+            })
+            if (this.data.againFabricName){
 
-        //     }
-        //   })
-        // }
+            }
+          })
+        }
         return
       }
       let list = [
@@ -328,18 +332,16 @@ Page({
       for(let i = 0;i < res.data.data.length;i++){
         list.push(res.data.data[i])
       }
-      console.log(_this.data.fabricTypeIndex)
-      console.log(this.data.fabricTypeIndex)
       if (_this.data.fabricTypeIndex==1){
-        console.log(306)
         _this.setData({
           fabricList: _this.data.jingxiaoList,
+          jiagongList: list,
           wwwFileBaseUrl: res.data.wwwFileBaseUrl
         })
       } else{
-        console.log(313)
         _this.setData({
           fabricList: list,
+          jiagongList: list,
           wwwFileBaseUrl: res.data.wwwFileBaseUrl
         })
       }
@@ -358,17 +360,17 @@ Page({
         })
       }
       if (this.data.againFabricName){
-        // const jingxiaoParams = {
-        //   page: 1,
-        //   rows: 999,
-        //   fkCustomerId: -10
-        // }
-        // request.request(this.data.requestUrl.fabric, jingxiaoParams, 'get', '', (res) => {
-        //   this.setData({
-        //     fabricList: res.data.data,
-        //     jingxiaoList: res.data.data
-        //   })
-        // })
+        const jingxiaoParams = {
+          page: 1,
+          rows: 999,
+          fkCustomerId: -10
+        }
+        request.request(this.data.requestUrl.fabric, jingxiaoParams, 'get', '', (res) => {
+          this.setData({
+            fabricList: res.data.data,
+            jingxiaoList: res.data.data
+          })
+        })
         let arrList = [
           {
             id: 0,
@@ -756,6 +758,7 @@ Page({
       detailStrs: flowerMsg,
       filePath:this.data.filePath,
       configName: this.data.configList[this.data.configIndex].name,
+      machineId: this.data.configList[this.data.configIndex].machineId,
       expedite: this.data.expedite,
       sizingName: this.data.sizingList[this.data.sizingIndex].name,
       sizingId:this.data.sizingList[this.data.sizingIndex].id
@@ -869,6 +872,7 @@ Page({
       note2: !this.data.note2 ? '' : this.data.note2,
       filePath: this.data.filePath,
       configName: this.data.configList[this.data.configIndex].name,
+      machineId: this.data.configList[this.data.configIndex].machineId,
       expedite: this.data.expedite,
       sizingName: this.data.sizingList[this.data.sizingIndex].name,
       sizingId: this.data.sizingList[this.data.sizingIndex].id
@@ -894,7 +898,11 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-    console.log(options)
+    if (options.checkTime){
+      this.setData({
+        checkTime:false
+      })
+    }
     this.getFabricListAll()
     this.getSizingList()
     this.getColorBoyList(); 
@@ -910,9 +918,12 @@ Page({
     })
     if(options.flowerInfo){
       let flowerList = JSON.parse(options.flowerInfo);
+      console.log(flowerList)
       let flowerListResult=[];
       flowerList.forEach(item=>{
-        item.num = item.picName;
+        item.num = item.name;
+        item.customContent = item.url
+        item.productId = item.score
         let itemResult = item;
         flowerListResult.push(itemResult)
       })
@@ -922,7 +933,6 @@ Page({
     }
     if(options.again){
       let orderInfo = JSON.parse(options.again);
-      console.log(orderInfo)
       this.setData({
         againFabricName: orderInfo.fabricName,
         againConfig: orderInfo.configName,
@@ -959,7 +969,6 @@ Page({
       })
       let time = util.formaData();
       this.getFabricList(userInfo);
-      console.log(940)
       this.setData({
         userInfo: userInfo,
         flowerList: newList,

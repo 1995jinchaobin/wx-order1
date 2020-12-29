@@ -21,8 +21,8 @@
     <view class='list-masonry'>
       <view class='item-masonry' wx:for="{{imgList}}" wx:key="index">
         <view class="actBtn" wx:if="{{userInfo.role==1||userInfo.role==2}}" data-info="{{item}}" bindtap="actFlower">选择花型</view>
-        <image lazy-load src='{{baseUrl + item.customContent}}' bindtap="clickImg" data-item="{{item}}" mode='widthFix'></image>
-        <text>{{item.picName}}</text>
+        <image lazy-load src='{{baseUrl + item.url}}' bindtap="clickImg" data-item="{{item}}" mode='widthFix'></image>
+        <text>{{item.name}}</text>
       </view>
    </view>
   </view>
@@ -37,7 +37,7 @@
         <scroll-view scroll-x enable-flex class="msgBox">
           <view wx:for="{{actFlowerList}}" wx:key = "index" class="scrollItem">
             <image class="icon" src="../../images/order/CloseIcon.png" id="{{index}}" bindtap="deleteFlower"></image>
-            <image src="{{baseUrl + item.customContent}}"></image>
+            <image src="{{baseUrl + item.url}}"></image>
           </view>
         </scroll-view>
         <view class="addBox" style="top:{{flowerList.length > 0 ? '94rpx' : '94rpx'}}">
