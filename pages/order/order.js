@@ -254,6 +254,7 @@ Page({
       this.setData({
         jingxiaoList: arr.concat(res.data.data)
       })
+      console.log(this.data.jingxiaoList)
     })
   },
   // 选择快递方式
@@ -367,8 +368,8 @@ Page({
         }
         request.request(this.data.requestUrl.fabric, jingxiaoParams, 'get', '', (res) => {
           this.setData({
-            fabricList: res.data.data,
-            jingxiaoList: res.data.data
+            fabricList: list.concat(res.data.data),
+            jingxiaoList: list.concat(res.data.data)
           })
         })
         let arrList = [
